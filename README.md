@@ -1,6 +1,6 @@
 # MCBStaff
 
-[![Build and Release](https://github.com/yourusername/mcbstaff/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/yourusername/mcbstaff/actions/workflows/build-and-release.yml)
+[![Build and Release](https://github.com/PluginsByAlex/MCBStaff/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/PluginsByAlex/MCBStaff/actions/workflows/build-and-release.yml)
 
 A lightweight staff utility plugin for Minecraft servers that provides a dedicated staff mode with moderation tools and inventory management.
 

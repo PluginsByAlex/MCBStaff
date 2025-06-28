@@ -12,7 +12,7 @@
 
     <name>MCBStaff</name>
     <description>A lightweight staff utility plugin for Minecraft servers</description>
-    <url>https://github.com/yourusername/mcbstaff</url>
+    <url>https://github.com/PluginsByAlex/MCBStaff</url>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
