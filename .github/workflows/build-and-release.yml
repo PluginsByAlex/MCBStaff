@@ -3,10 +3,9 @@ name: Build and Release
 on:
   push:
     branches: [ main, master ]
+    tags: [ 'v*' ]
   pull_request:
     branches: [ main, master ]
-  release:
-    types: [created, published]
 
 jobs:
   build:
@@ -35,16 +34,15 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: mcbstaff-jar
-        path: target/*.jar
+        name: MCBStaff-JAR
+        path: target/MCBStaff-*.jar
         
   release:
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
-      pull-requests: read
     
     steps:
     - name: Checkout code
@@ -59,112 +57,45 @@ jobs:
     - name: Build with Maven
       run: mvn clean compile package
       
-    - name: Get version from pom.xml
+    - name: Get version from tag
       id: get_version
-      run: |
-        VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        
-    - name: Get commit count
-      id: get_count
-      run: |
-        COUNT=$(git rev-list --count HEAD)
-        echo "count=$COUNT" >> $GITHUB_OUTPUT
-        
-    - name: Create release tag
-      id: create_tag
-      run: |
-        TAG="v${{ steps.get_version.outputs.version }}-build${{ steps.get_count.outputs.count }}"
-        echo "tag=$TAG" >> $GITHUB_OUTPUT
-        
-    - name: Get JAR file name
-      id: get_jar
-      run: |
-        JAR_FILE=$(find target -name "*.jar" | head -1)
-        JAR_NAME=$(basename "$JAR_FILE")
-        echo "jar_file=$JAR_FILE" >> $GITHUB_OUTPUT
-        echo "jar_name=$JAR_NAME" >> $GITHUB_OUTPUT
-        
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
     - name: Create Release
-      id: create_release
       uses: softprops/action-gh-release@v2
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        tag_name: ${{ steps.create_tag.outputs.tag }}
-        name: MCBStaff ${{ steps.create_tag.outputs.tag }}
+        tag_name: ${{ github.ref_name }}
+        name: MCBStaff v${{ steps.get_version.outputs.VERSION }}
         body: |
-          ## MCBStaff Release ${{ steps.create_tag.outputs.tag }}
+          ## MCBStaff v${{ steps.get_version.outputs.VERSION }}
           
-          **Automatic build from commit:** ${{ github.sha }}
+          ### Features
+          - Staff mode with inventory saving/restoration
+          - Player freeze system with comprehensive controls
+          - Ore tracker GUI for monitoring player mining
+          - Staff teleportation tools (including random TP)
+          - Invisibility toggles for staff
+          - CPS (Clicks Per Second) monitoring system
+          - Professional message system with configurable prefix
           
-          ### Features:
-          - 🛠️ Staff mode with inventory saving/restoration
-          - 🧊 Player freeze system
-          - 📊 Ore tracker GUI
-          - 🎯 Staff teleportation tools
-          - 👻 Invisibility toggles
-          - 🎲 Random player teleportation
-          
-          ### Installation:
-          1. Download the `${{ steps.get_jar.outputs.jar_name }}` file below
-          2. Place it in your server's `plugins/` folder
+          ### Installation
+          1. Download the JAR file below
+          2. Place it in your server's `plugins` folder
           3. Restart your server
           4. Configure the plugin in `plugins/MCBStaff/config.yml`
           
-          ### Commands:
+          ### Commands
           - `/staff` - Toggle staff mode
           - `/freeze <player>` - Freeze/unfreeze a player
           - `/ores` - Open ore tracker GUI
           
-          ### Permissions:
+          ### Permissions
           - `mcbstaff.staff` - Access to staff mode
           - `mcbstaff.freeze` - Use freeze commands
           - `mcbstaff.ores` - View ore tracker
           - `mcbstaff.randomtp` - Use random teleport
           
           **Compatibility:** Minecraft 1.21.4+ (Paper/Spigot)
+        files: target/MCBStaff-*.jar
         draft: false
-        prerelease: false
-        make_latest: true
-        generate_release_notes: false
-        files: ${{ steps.get_jar.outputs.jar_file }}
-        
-  attach_jar_to_release:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release'
-    permissions:
-      contents: write
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Set up JDK 21
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        
-    - name: Cache Maven dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-        
-    - name: Build with Maven
-      run: mvn clean compile package
-      
-    - name: Get JAR file name
-      id: get_jar
-      run: |
-        JAR_FILE=$(find target -name "*.jar" | head -1)
-        JAR_NAME=$(basename "$JAR_FILE")
-        echo "jar_file=$JAR_FILE" >> $GITHUB_OUTPUT
-        echo "jar_name=$JAR_NAME" >> $GITHUB_OUTPUT
-        
-    - name: Upload JAR to Release
-      uses: softprops/action-gh-release@v2
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: ${{ steps.get_jar.outputs.jar_file }} 
+        prerelease: false 
