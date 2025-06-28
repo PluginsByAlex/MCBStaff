@@ -9,8 +9,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -125,6 +127,19 @@ public class StaffItemListener implements Listener {
         if (!(event.getWhoClicked() instanceof Player)) return;
         
         Player player = (Player) event.getWhoClicked();
+        
+        // Prevent inventory manipulation while in staff mode (except for staff GUIs)
+        if (plugin.getStaffModeManager().isInStaffMode(player)) {
+            String teleportGUITitle = plugin.getConfigManager().getTeleportGUITitle();
+            boolean isStaffGUI = event.getView().getTitle().equals(teleportGUITitle) || 
+                               plugin.getOreTrackerManager().isOreTrackerGUI(event.getInventory());
+            
+            if (!isStaffGUI) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+        
         String teleportGUITitle = plugin.getConfigManager().getTeleportGUITitle();
         
         // Handle teleport GUI clicks
@@ -174,6 +189,28 @@ public class StaffItemListener implements Listener {
                 Component message = plugin.getConfigManager().getMessageComponent("ore-tracker-updated");
                 player.sendMessage(message);
             }
+        }
+    }
+    
+    @EventHandler
+    public void onPlayerDropItem(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+        
+        // Prevent dropping items while in staff mode
+        if (plugin.getStaffModeManager().isInStaffMode(player)) {
+            event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler
+    public void onEntityPickupItem(EntityPickupItemEvent event) {
+        if (!(event.getEntity() instanceof Player)) return;
+        
+        Player player = (Player) event.getEntity();
+        
+        // Prevent picking up items while in staff mode
+        if (plugin.getStaffModeManager().isInStaffMode(player)) {
+            event.setCancelled(true);
         }
     }
     
