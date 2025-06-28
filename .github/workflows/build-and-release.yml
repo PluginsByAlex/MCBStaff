@@ -40,6 +40,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    permissions:
+      contents: write
+      pull-requests: read
     
     steps:
     - name: Checkout code
@@ -71,10 +74,6 @@ jobs:
       run: |
         TAG="v${{ steps.get_version.outputs.version }}-build${{ steps.get_count.outputs.count }}"
         echo "tag=$TAG" >> $GITHUB_OUTPUT
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git tag $TAG
-        git push origin $TAG
         
     - name: Get JAR file name
       id: get_jar
@@ -87,9 +86,8 @@ jobs:
     - name: Create Release
       id: create_release
       uses: softprops/action-gh-release@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
+        token: ${{ secrets.GITHUB_TOKEN }}
         tag_name: ${{ steps.create_tag.outputs.tag }}
         name: MCBStaff ${{ steps.create_tag.outputs.tag }}
         body: |
@@ -125,4 +123,6 @@ jobs:
           **Compatibility:** Minecraft 1.21.4+ (Paper/Spigot)
         draft: false
         prerelease: false
+        make_latest: true
+        generate_release_notes: false
         files: ${{ steps.get_jar.outputs.jar_file }} 
