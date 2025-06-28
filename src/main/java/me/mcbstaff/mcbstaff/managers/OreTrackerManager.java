@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +59,8 @@ public class OreTrackerManager {
             if (slot >= 45) break; // Leave space for navigation
             
             ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD);
-            ItemMeta meta = playerHead.getItemMeta();
+            SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
+            meta.setOwningPlayer(onlinePlayer);
             meta.setDisplayName("§f" + onlinePlayer.getName());
             
             List<String> lore = new ArrayList<>();

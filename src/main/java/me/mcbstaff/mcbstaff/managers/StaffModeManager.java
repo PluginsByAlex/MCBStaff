@@ -1,6 +1,7 @@
 package me.mcbstaff.mcbstaff.managers;
 
 import me.mcbstaff.mcbstaff.MCBStaff;
+import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -48,8 +49,9 @@ public class StaffModeManager {
         // Give staff items
         giveStaffItems(player);
         
-        // Send message
-        player.sendMessage(plugin.getConfigManager().getMessage("staff-mode-enabled"));
+        // Send message using Adventure API
+        Component message = plugin.getConfigManager().getMessageComponent("staff-mode-enabled");
+        player.sendMessage(message);
     }
     
     public void disableStaffMode(Player player) {
@@ -68,8 +70,9 @@ public class StaffModeManager {
         player.setAllowFlight(data.getAllowFlight());
         player.setFlying(data.isFlying() && data.getAllowFlight());
         
-        // Send message
-        player.sendMessage(plugin.getConfigManager().getMessage("staff-mode-disabled"));
+        // Send message using Adventure API
+        Component message = plugin.getConfigManager().getMessageComponent("staff-mode-disabled");
+        player.sendMessage(message);
     }
     
     public void toggleStaffMode(Player player) {
@@ -90,53 +93,42 @@ public class StaffModeManager {
     }
     
     private void giveStaffItems(Player player) {
-        // Compass (teleport GUI)
-        ItemStack compass = new ItemStack(Material.COMPASS);
-        ItemMeta compassMeta = compass.getItemMeta();
-        compassMeta.setDisplayName("§6§lTeleport GUI");
-        compassMeta.setLore(Arrays.asList("§7Right-click to open teleport menu"));
-        compass.setItemMeta(compassMeta);
-        player.getInventory().setItem(0, compass);
+        // Teleport GUI
+        createAndGiveStaffItem(player, "teleportGUI");
         
-        // Gray Dye (invisibility)
-        ItemStack grayDye = new ItemStack(Material.GRAY_DYE);
-        ItemMeta grayMeta = grayDye.getItemMeta();
-        grayMeta.setDisplayName("§8§lInvisibility");
-        grayMeta.setLore(Arrays.asList("§7Right-click to become invisible"));
-        grayDye.setItemMeta(grayMeta);
-        player.getInventory().setItem(1, grayDye);
+        // Invisibility
+        createAndGiveStaffItem(player, "invisibility");
         
-        // Green Dye (visibility)
-        ItemStack greenDye = new ItemStack(Material.GREEN_DYE);
-        ItemMeta greenMeta = greenDye.getItemMeta();
-        greenMeta.setDisplayName("§a§lVisibility");
-        greenMeta.setLore(Arrays.asList("§7Right-click to become visible"));
-        greenDye.setItemMeta(greenMeta);
-        player.getInventory().setItem(2, greenDye);
+        // Visibility
+        createAndGiveStaffItem(player, "visibility");
         
-        // Ender Pearl (random teleport)
-        ItemStack enderPearl = new ItemStack(Material.ENDER_PEARL);
-        ItemMeta pearlMeta = enderPearl.getItemMeta();
-        pearlMeta.setDisplayName("§d§lRandom Teleport");
-        pearlMeta.setLore(Arrays.asList("§7Right-click to teleport to a random player"));
-        enderPearl.setItemMeta(pearlMeta);
-        player.getInventory().setItem(3, enderPearl);
+        // Random Teleport
+        createAndGiveStaffItem(player, "randomTeleport");
         
-        // Blaze Rod (freeze rod)
-        ItemStack freezeRod = new ItemStack(Material.BLAZE_ROD);
-        ItemMeta rodMeta = freezeRod.getItemMeta();
-        rodMeta.setDisplayName("§c§lFreeze Rod");
-        rodMeta.setLore(Arrays.asList("§7Right-click a player to freeze/unfreeze them"));
-        freezeRod.setItemMeta(rodMeta);
-        player.getInventory().setItem(4, freezeRod);
+        // Freeze Rod
+        createAndGiveStaffItem(player, "freezeRod");
         
-        // Book (ore tracker)
-        ItemStack book = new ItemStack(Material.BOOK);
-        ItemMeta bookMeta = book.getItemMeta();
-        bookMeta.setDisplayName("§6§lOre Tracker");
-        bookMeta.setLore(Arrays.asList("§7Right-click to view ore statistics"));
-        book.setItemMeta(bookMeta);
-        player.getInventory().setItem(8, book);
+        // Ore Tracker
+        createAndGiveStaffItem(player, "oreTracker");
+    }
+    
+    private void createAndGiveStaffItem(Player player, String itemKey) {
+        Material material = plugin.getConfigManager().getStaffItemMaterial(itemKey);
+        int slot = plugin.getConfigManager().getStaffItemSlot(itemKey);
+        Component nameComponent = plugin.getConfigManager().getStaffItemNameComponent(itemKey);
+        List<Component> loreComponents = plugin.getConfigManager().getStaffItemLoreComponents(itemKey);
+        
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        
+        // Set display name using Adventure API
+        meta.displayName(nameComponent);
+        
+        // Set lore using Adventure API
+        meta.lore(loreComponents);
+        
+        item.setItemMeta(meta);
+        player.getInventory().setItem(slot, item);
     }
     
     // PlayerData inner class

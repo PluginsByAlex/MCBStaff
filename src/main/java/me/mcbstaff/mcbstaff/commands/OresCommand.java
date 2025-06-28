@@ -1,6 +1,8 @@
 package me.mcbstaff.mcbstaff.commands;
 
 import me.mcbstaff.mcbstaff.MCBStaff;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,14 +19,20 @@ public class OresCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("§cThis command can only be used by players!");
+            Component message = Component.text().append(
+                MiniMessage.miniMessage().deserialize("<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <red>This command can only be used by players!</red>")
+            ).build();
+            sender.sendMessage(message);
             return true;
         }
         
         Player player = (Player) sender;
         
         if (!player.hasPermission("mcbstaff.ores")) {
-            player.sendMessage("§cYou don't have permission to use this command!");
+            Component message = Component.text().append(
+                MiniMessage.miniMessage().deserialize("<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <red>You don't have permission to use this command!</red>")
+            ).build();
+            player.sendMessage(message);
             return true;
         }
         

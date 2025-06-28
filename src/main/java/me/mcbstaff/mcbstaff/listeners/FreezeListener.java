@@ -1,6 +1,7 @@
 package me.mcbstaff.mcbstaff.listeners;
 
 import me.mcbstaff.mcbstaff.MCBStaff;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,7 +31,8 @@ public class FreezeListener implements Listener {
             event.getFrom().getZ() != event.getTo().getZ()) {
             
             event.setCancelled(true);
-            player.sendMessage(plugin.getConfigManager().getMessage("freeze-deny-move"));
+            Component message = plugin.getConfigManager().getMessageComponent("freeze-deny-move");
+            player.sendMessage(message);
         }
     }
     
@@ -41,7 +43,8 @@ public class FreezeListener implements Listener {
         if (!plugin.getFreezeManager().isFrozen(player)) return;
         
         event.setCancelled(true);
-        player.sendMessage(plugin.getConfigManager().getMessage("freeze-deny-chat"));
+        Component message = plugin.getConfigManager().getMessageComponent("freeze-deny-chat");
+        player.sendMessage(message);
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -57,7 +60,8 @@ public class FreezeListener implements Listener {
         // Check if the command is blocked
         if (plugin.getConfigManager().isCommandBlocked(baseCommand)) {
             event.setCancelled(true);
-            player.sendMessage(plugin.getConfigManager().getMessage("freeze-deny-command"));
+            Component message = plugin.getConfigManager().getMessageComponent("freeze-deny-command");
+            player.sendMessage(message);
         }
     }
     

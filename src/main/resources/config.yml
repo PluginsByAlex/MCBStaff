@@ -2,28 +2,90 @@
 # A lightweight staff utility plugin for Minecraft servers
 
 # Plugin messages - customize all plugin messages here
+# Supports both legacy color codes (&) and modern MiniMessage format
+# MiniMessage examples:
+#   - Gradients: <gradient:red:blue>text</gradient>
+#   - Click events: <click:run_command:/help>Click me!</click>
+#   - Hover text: <hover:show_text:'Tooltip text'>Hover over me</hover>
+#   - Formatting: <bold><italic><red>Bold italic red text</red></italic></bold>
+# 
+# Legacy format (&a, &c, etc.) is still fully supported
 messages:
-  staff-mode-enabled: "&a[MCBStaff] &7Staff mode &aenabled&7!"
-  staff-mode-disabled: "&a[MCBStaff] &7Staff mode &cdisabled&7!"
-  staff-mode-toggle-others: "&a[MCBStaff] &7Toggled staff mode for &f{player}&7!"
-  freeze-enabled: "&a[MCBStaff] &7Player &f{player} &7has been &cfrozen&7!"
-  freeze-disabled: "&a[MCBStaff] &7Player &f{player} &7has been &aunfrozen&7!"
-  freeze-notify-player: "&c[MCBStaff] &7You have been frozen by a staff member!"
-  freeze-unfreeze-notify-player: "&a[MCBStaff] &7You have been unfrozen!"
-  freeze-deny-move: "&c[MCBStaff] &7You cannot move while frozen!"
-  freeze-deny-chat: "&c[MCBStaff] &7You cannot chat while frozen!"
-  freeze-deny-command: "&c[MCBStaff] &7You cannot use commands while frozen!"
-  player-not-found: "&c[MCBStaff] &7Player not found!"
-  already-frozen: "&c[MCBStaff] &7Player &f{player} &7is already frozen!"
-  not-frozen: "&c[MCBStaff] &7Player &f{player} &7is not frozen!"
-  teleported-to-player: "&a[MCBStaff] &7Teleported to &f{player}&7!"
-  no-players-found: "&c[MCBStaff] &7No players found for random teleport!"
-  ore-tracker-title: "&8[&6Ore Tracker&8]"
-  ore-tracker-updated: "&a[MCBStaff] &7Ore tracker updated!"
+  staff-mode-enabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Staff mode <green>enabled</green>!</gray>"
+  staff-mode-disabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Staff mode <red>disabled</red>!</gray>"
+  staff-mode-toggle-others: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Toggled staff mode for <white>{player}</white>!</gray>"
+  freeze-enabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Player <white>{player}</white> has been <red>frozen</red>!</gray>"
+  freeze-disabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Player <white>{player}</white> has been <green>unfrozen</green>!</gray>"
+  freeze-notify-player: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>You have been frozen by a staff member!</gray>"
+  freeze-unfreeze-notify-player: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>You have been unfrozen!</gray>"
+  freeze-deny-move: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>You cannot move while frozen!</gray>"
+  freeze-deny-chat: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>You cannot chat while frozen!</gray>"
+  freeze-deny-command: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>You cannot use commands while frozen!</gray>"
+  player-not-found: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <red>Player not found!</red>"
+  already-frozen: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Player <white>{player}</white> is already frozen!</gray>"
+  not-frozen: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Player <white>{player}</white> is not frozen!</gray>"
+  teleported-to-player: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Teleported to <white>{player}</white>!</gray>"
+  no-players-found: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <red>No players found for random teleport!</red>"
+  ore-tracker-title: "<dark_gray>[</dark_gray><gold>Ore Tracker</gold><dark_gray>]</dark_gray>"
+  ore-tracker-updated: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Ore tracker updated!</gray>"
+  invisibility-enabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>You are now <dark_gray>invisible</dark_gray>!</gray>"
+  invisibility-disabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>You are now <green>visible</green>!</gray>"
+  invisibility-broadcast-enabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <white>{player}</white> <gray>is now <dark_gray>invisible</dark_gray>!</gray>"
+  invisibility-broadcast-disabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <white>{player}</white> <gray>is now <green>visible</green>!</gray>"
+
+# Staff items configuration - customize all staff mode items here
+# Both item names and lore support MiniMessage format!
+# Examples:
+#   name: "<gradient:gold:yellow><bold>Teleport GUI</bold></gradient>"
+#   lore:
+#     - "<gray>Right-click to open teleport menu"
+#     - "<click:suggest_command:/help><green>Click for help!</green></click>"
+staffItems:
+  teleportGUI:
+    material: "COMPASS"
+    slot: 0
+    name: "<b><gradient:#832466:#BF4299:#832466>Teleport GUI</gradient></b>"
+    lore:
+      - "<gray>Right-click to open teleport menu"
+  
+  invisibility:
+    material: "GRAY_DYE"
+    slot: 1
+    name: "<b><dark_gray>Invisibility</dark_gray></b>"
+    lore:
+      - "<gray>Right-click to become invisible"
+  
+  visibility:
+    material: "GREEN_DYE"
+    slot: 2
+    name: "<b><green>Visibility</green></b>"
+    lore:
+      - "<gray>Right-click to become visible"
+  
+  randomTeleport:
+    material: "ENDER_PEARL"
+    slot: 3
+    name: "<b><gradient:#832466:#BF4299:#832466>Random Teleport</gradient></b>"
+    lore:
+      - "<gray>Right-click to teleport to a random player"
+  
+  freezeRod:
+    material: "BLAZE_ROD"
+    slot: 4
+    name: "<b><red>Freeze Rod</red></b>"
+    lore:
+      - "<gray>Right-click a player to freeze/unfreeze them"
+  
+  oreTracker:
+    material: "BOOK"
+    slot: 8
+    name: "<b><gradient:#832466:#BF4299:#832466>Ore Tracker</gradient></b>"
+    lore:
+      - "<gray>Right-click to view ore statistics"
 
 # Random teleport configuration
 randomTeleport:
-  # Worlds to ignore for random teleport (case-sensitive)
+  # Worlds to ignore for random teleport (players in these worlds won't be teleport targets)
   ignoreWorlds:
     - "world_nether"
     - "world_the_end"
@@ -31,6 +93,11 @@ randomTeleport:
   
   # Maximum teleport distance from spawn (in blocks)
   radius: 1000
+
+# Invisibility configuration
+invisibility:
+  # Whether to broadcast invisibility changes to staff members
+  broadcastToStaff: true
 
 # Ore tracker configuration
 oreTracker:
@@ -76,4 +143,22 @@ freeze:
     - "tell"
     - "whisper"
     - "r"
-    - "reply" 
+    - "reply"
+  
+  # Title and subtitle shown to frozen players
+  title:
+    enabled: true
+    # Main title text
+    text: "<b><red>FROZEN</red></b>"
+    # Subtitle text
+    subtitle: "<gray>Join the discord</gray>"
+    # Title timings (in ticks): fadeIn, stay, fadeOut
+    fadeIn: 10
+    stay: 70
+    fadeOut: 20
+  
+  # Blindness effect configuration
+  blindness:
+    enabled: true
+    # Blindness effect level (0-255, recommended: 0-2)
+    level: 1 

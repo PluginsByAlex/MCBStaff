@@ -1,6 +1,8 @@
 package me.mcbstaff.mcbstaff.listeners;
 
 import me.mcbstaff.mcbstaff.MCBStaff;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -11,6 +13,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -36,43 +39,41 @@ public class StaffItemListener implements Listener {
         if (!plugin.getStaffModeManager().isInStaffMode(player)) return;
         
         ItemMeta meta = item.getItemMeta();
-        String displayName = meta.getDisplayName();
+        Component displayName = meta.displayName();
+        String displayNameString = displayName != null ? 
+            plugin.getConfigManager().getLegacySerializer().serialize(displayName) : null;
         
-        switch (item.getType()) {
-            case COMPASS:
-                if ("§6§lTeleport GUI".equals(displayName)) {
+        // Identify the staff item type from config
+        String staffItemType = plugin.getConfigManager().getStaffItemType(item.getType(), displayNameString);
+        
+        if (staffItemType != null) {
+            event.setCancelled(true);
+            
+            switch (staffItemType) {
+                case "teleportGUI":
                     openTeleportGUI(player);
-                    event.setCancelled(true);
-                }
-                break;
-                
-            case GRAY_DYE:
-                if ("§8§lInvisibility".equals(displayName)) {
+                    break;
+                    
+                case "invisibility":
                     toggleInvisibility(player, true);
-                    event.setCancelled(true);
-                }
-                break;
-                
-            case GREEN_DYE:
-                if ("§a§lVisibility".equals(displayName)) {
+                    break;
+                    
+                case "visibility":
                     toggleInvisibility(player, false);
-                    event.setCancelled(true);
-                }
-                break;
-                
-            case ENDER_PEARL:
-                if ("§d§lRandom Teleport".equals(displayName)) {
+                    break;
+                    
+                case "randomTeleport":
                     randomTeleport(player);
-                    event.setCancelled(true);
-                }
-                break;
-                
-            case BOOK:
-                if ("§6§lOre Tracker".equals(displayName)) {
+                    break;
+                    
+                case "freezeRod":
+                    // Cancel this event - freeze functionality is handled in PlayerInteractEntityEvent
+                    break;
+                    
+                case "oreTracker":
                     plugin.getOreTrackerManager().openOreTrackerGUI(player);
-                    event.setCancelled(true);
-                }
-                break;
+                    break;
+            }
         }
     }
     
@@ -85,14 +86,22 @@ public class StaffItemListener implements Listener {
         if (!plugin.getStaffModeManager().isInStaffMode(player)) return;
         
         ItemMeta meta = item.getItemMeta();
-        String displayName = meta.getDisplayName();
+        Component displayName = meta.displayName();
+        String displayNameString = displayName != null ? 
+            plugin.getConfigManager().getLegacySerializer().serialize(displayName) : null;
         
-        if (item.getType() == Material.BLAZE_ROD && "§c§lFreeze Rod".equals(displayName)) {
+        // Check if this is the freeze rod from config
+        String staffItemType = plugin.getConfigManager().getStaffItemType(item.getType(), displayNameString);
+        
+        if ("freezeRod".equals(staffItemType)) {
             if (event.getRightClicked() instanceof Player) {
                 Player target = (Player) event.getRightClicked();
                 
                 if (!player.hasPermission("mcbstaff.freeze")) {
-                    player.sendMessage("§cYou don't have permission to freeze players!");
+                    Component message = Component.text().append(
+                        MiniMessage.miniMessage().deserialize("<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <red>You don't have permission to freeze players!</red>")
+                    ).build();
+                    player.sendMessage(message);
                     return;
                 }
                 
@@ -107,9 +116,10 @@ public class StaffItemListener implements Listener {
         if (!(event.getWhoClicked() instanceof Player)) return;
         
         Player player = (Player) event.getWhoClicked();
+        String teleportGUITitle = plugin.getConfigManager().getTeleportGUITitle();
         
         // Handle teleport GUI clicks
-        if (event.getView().getTitle().equals("§6§lTeleport Menu")) {
+        if (event.getView().getTitle().equals(teleportGUITitle)) {
             event.setCancelled(true);
             
             ItemStack clicked = event.getCurrentItem();
@@ -118,13 +128,17 @@ public class StaffItemListener implements Listener {
             ItemMeta meta = clicked.getItemMeta();
             if (meta == null) return;
             
-            String targetName = meta.getDisplayName().replace("§f", "");
+            Component displayName = meta.displayName();
+            if (displayName == null) return;
+            
+            String targetName = plugin.getConfigManager().getLegacySerializer().serialize(displayName).replace("§f", "");
             Player target = Bukkit.getPlayer(targetName);
             
             if (target != null && target.isOnline()) {
                 player.teleport(target.getLocation());
-                player.sendMessage(plugin.getConfigManager().getMessage("teleported-to-player", 
-                    "player", target.getName()));
+                Component message = plugin.getConfigManager().getMessageComponent("teleported-to-player", 
+                    "player", target.getName());
+                player.sendMessage(message);
                 player.closeInventory();
             }
         }
@@ -136,17 +150,26 @@ public class StaffItemListener implements Listener {
             ItemStack clicked = event.getCurrentItem();
             if (clicked == null) return;
             
+            ItemMeta meta = clicked.getItemMeta();
+            if (meta == null) return;
+            
+            Component displayName = meta.displayName();
+            if (displayName == null) return;
+            
+            String displayNameString = plugin.getConfigManager().getLegacySerializer().serialize(displayName);
+            
             // Handle refresh button
-            if (clicked.getType() == Material.EMERALD && 
-                clicked.getItemMeta().getDisplayName().equals("§a§lRefresh")) {
+            if (clicked.getType() == Material.EMERALD && "§a§lRefresh".equals(displayNameString)) {
                 plugin.getOreTrackerManager().openOreTrackerGUI(player);
-                player.sendMessage(plugin.getConfigManager().getMessage("ore-tracker-updated"));
+                Component message = plugin.getConfigManager().getMessageComponent("ore-tracker-updated");
+                player.sendMessage(message);
             }
         }
     }
     
     private void openTeleportGUI(Player player) {
-        org.bukkit.inventory.Inventory gui = Bukkit.createInventory(null, 54, "§6§lTeleport Menu");
+        String guiTitle = plugin.getConfigManager().getTeleportGUITitle();
+        org.bukkit.inventory.Inventory gui = Bukkit.createInventory(null, 54, guiTitle);
         
         int slot = 0;
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
@@ -154,16 +177,21 @@ public class StaffItemListener implements Listener {
             if (slot >= 54) break;
             
             ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD);
-            ItemMeta meta = playerHead.getItemMeta();
-            meta.setDisplayName("§f" + onlinePlayer.getName());
+            SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
+            meta.setOwningPlayer(onlinePlayer);
             
-            List<String> lore = new ArrayList<>();
-            lore.add("§7Click to teleport to " + onlinePlayer.getName());
-            lore.add("§7World: §f" + onlinePlayer.getWorld().getName());
-            lore.add("§7Location: §f" + (int) onlinePlayer.getLocation().getX() + ", " + 
+            // Use Adventure API for display name
+            Component displayName = Component.text("§f" + onlinePlayer.getName());
+            meta.displayName(displayName);
+            
+            // Use Adventure API for lore
+            List<Component> lore = new ArrayList<>();
+            lore.add(Component.text("§7Click to teleport to " + onlinePlayer.getName()));
+            lore.add(Component.text("§7World: §f" + onlinePlayer.getWorld().getName()));
+            lore.add(Component.text("§7Location: §f" + (int) onlinePlayer.getLocation().getX() + ", " + 
                     (int) onlinePlayer.getLocation().getY() + ", " + 
-                    (int) onlinePlayer.getLocation().getZ());
-            meta.setLore(lore);
+                    (int) onlinePlayer.getLocation().getZ()));
+            meta.lore(lore);
             
             playerHead.setItemMeta(meta);
             gui.setItem(slot++, playerHead);
@@ -182,6 +210,20 @@ public class StaffItemListener implements Listener {
                     other.hidePlayer(plugin, player);
                 }
             }
+            
+            // Send feedback to the player using Adventure API
+            Component message = plugin.getConfigManager().getMessageComponent("invisibility-enabled");
+            player.sendMessage(message);
+            
+            // Broadcast to staff if enabled in config
+            if (plugin.getConfigManager().isBroadcastInvisibilityToStaff()) {
+                for (Player staff : Bukkit.getOnlinePlayers()) {
+                    if (staff != player && staff.hasPermission("mcbstaff.staff")) {
+                        Component staffMessage = plugin.getConfigManager().getMessageComponent("invisibility-broadcast-enabled", "player", player.getName());
+                        staff.sendMessage(staffMessage);
+                    }
+                }
+            }
         } else {
             player.removePotionEffect(PotionEffectType.INVISIBILITY);
             
@@ -189,12 +231,29 @@ public class StaffItemListener implements Listener {
             for (Player other : Bukkit.getOnlinePlayers()) {
                 other.showPlayer(plugin, player);
             }
+            
+            // Send feedback to the player using Adventure API
+            Component message = plugin.getConfigManager().getMessageComponent("invisibility-disabled");
+            player.sendMessage(message);
+            
+            // Broadcast to staff if enabled in config
+            if (plugin.getConfigManager().isBroadcastInvisibilityToStaff()) {
+                for (Player staff : Bukkit.getOnlinePlayers()) {
+                    if (staff != player && staff.hasPermission("mcbstaff.staff")) {
+                        Component staffMessage = plugin.getConfigManager().getMessageComponent("invisibility-broadcast-disabled", "player", player.getName());
+                        staff.sendMessage(staffMessage);
+                    }
+                }
+            }
         }
     }
     
     private void randomTeleport(Player player) {
         if (!player.hasPermission("mcbstaff.randomtp")) {
-            player.sendMessage("§cYou don't have permission to use random teleport!");
+            Component message = Component.text().append(
+                MiniMessage.miniMessage().deserialize("<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <red>You don't have permission to use random teleport!</red>")
+            ).build();
+            player.sendMessage(message);
             return;
         }
         
@@ -208,13 +267,15 @@ public class StaffItemListener implements Listener {
         }
         
         if (availablePlayers.isEmpty()) {
-            player.sendMessage(plugin.getConfigManager().getMessage("no-players-found"));
+            Component message = plugin.getConfigManager().getMessageComponent("no-players-found");
+            player.sendMessage(message);
             return;
         }
         
         Player target = availablePlayers.get(random.nextInt(availablePlayers.size()));
         player.teleport(target.getLocation());
-        player.sendMessage(plugin.getConfigManager().getMessage("teleported-to-player", 
-            "player", target.getName()));
+        Component message = plugin.getConfigManager().getMessageComponent("teleported-to-player", 
+            "player", target.getName());
+        player.sendMessage(message);
     }
 } 
