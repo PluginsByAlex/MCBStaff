@@ -1,0 +1,43 @@
+main: me.mcbstaff.mcbstaff.MCBStaff
+name: MCBStaff
+version: ${project.version}
+api-version: 1.21
+author: MCBStaff
+description: ${project.description}
+website: ${project.url}
+
+commands:
+  staff:
+    description: Toggle staff mode
+    permission: mcbstaff.staff
+    permission-message: You don't have permission to use this command!
+  freeze:
+    description: Freeze or unfreeze a player
+    usage: /freeze <player>
+    permission: mcbstaff.freeze
+    permission-message: You don't have permission to use this command!
+  ores:
+    description: Open the ore tracker GUI
+    permission: mcbstaff.ores
+    permission-message: You don't have permission to use this command!
+
+permissions:
+  mcbstaff.*:
+    description: Access to all MCBStaff features
+    children:
+      mcbstaff.staff: true
+      mcbstaff.freeze: true
+      mcbstaff.ores: true
+      mcbstaff.randomtp: true
+  mcbstaff.staff:
+    description: Access to staff mode and staff items
+    default: op
+  mcbstaff.freeze:
+    description: Use freeze command and Freeze Rod
+    default: op
+  mcbstaff.ores:
+    description: View ore tracker GUI
+    default: op
+  mcbstaff.randomtp:
+    description: Use the Random Teleport Pearl
+    default: op 

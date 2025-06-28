@@ -1,0 +1,79 @@
+# MCBStaff Configuration
+# A lightweight staff utility plugin for Minecraft servers
+
+# Plugin messages - customize all plugin messages here
+messages:
+  staff-mode-enabled: "&a[MCBStaff] &7Staff mode &aenabled&7!"
+  staff-mode-disabled: "&a[MCBStaff] &7Staff mode &cdisabled&7!"
+  staff-mode-toggle-others: "&a[MCBStaff] &7Toggled staff mode for &f{player}&7!"
+  freeze-enabled: "&a[MCBStaff] &7Player &f{player} &7has been &cfrozen&7!"
+  freeze-disabled: "&a[MCBStaff] &7Player &f{player} &7has been &aunfrozen&7!"
+  freeze-notify-player: "&c[MCBStaff] &7You have been frozen by a staff member!"
+  freeze-unfreeze-notify-player: "&a[MCBStaff] &7You have been unfrozen!"
+  freeze-deny-move: "&c[MCBStaff] &7You cannot move while frozen!"
+  freeze-deny-chat: "&c[MCBStaff] &7You cannot chat while frozen!"
+  freeze-deny-command: "&c[MCBStaff] &7You cannot use commands while frozen!"
+  player-not-found: "&c[MCBStaff] &7Player not found!"
+  already-frozen: "&c[MCBStaff] &7Player &f{player} &7is already frozen!"
+  not-frozen: "&c[MCBStaff] &7Player &f{player} &7is not frozen!"
+  teleported-to-player: "&a[MCBStaff] &7Teleported to &f{player}&7!"
+  no-players-found: "&c[MCBStaff] &7No players found for random teleport!"
+  ore-tracker-title: "&8[&6Ore Tracker&8]"
+  ore-tracker-updated: "&a[MCBStaff] &7Ore tracker updated!"
+
+# Random teleport configuration
+randomTeleport:
+  # Worlds to ignore for random teleport (case-sensitive)
+  ignoreWorlds:
+    - "world_nether"
+    - "world_the_end"
+    - "spawn"
+  
+  # Maximum teleport distance from spawn (in blocks)
+  radius: 1000
+
+# Ore tracker configuration
+oreTracker:
+  # List of blocks to track (Material names)
+  trackedOres:
+    - "DIAMOND_ORE"
+    - "DEEPSLATE_DIAMOND_ORE"
+    - "EMERALD_ORE"
+    - "DEEPSLATE_EMERALD_ORE"
+    - "GOLD_ORE"
+    - "DEEPSLATE_GOLD_ORE"
+    - "IRON_ORE"
+    - "DEEPSLATE_IRON_ORE"
+    - "COPPER_ORE"
+    - "DEEPSLATE_COPPER_ORE"
+    - "COAL_ORE"
+    - "DEEPSLATE_COAL_ORE"
+    - "LAPIS_ORE"
+    - "DEEPSLATE_LAPIS_ORE"
+    - "REDSTONE_ORE"
+    - "DEEPSLATE_REDSTONE_ORE"
+    - "NETHER_QUARTZ_ORE"
+    - "NETHER_GOLD_ORE"
+    - "ANCIENT_DEBRIS"
+  
+  # GUI update interval in ticks (20 ticks = 1 second)
+  updateIntervalTicks: 60
+
+# Freeze system configuration
+freeze:
+  # Commands that frozen players cannot use (case-insensitive)
+  denyCommands:
+    - "spawn"
+    - "home"
+    - "tp"
+    - "teleport"
+    - "warp"
+    - "back"
+    - "tpa"
+    - "tpaccept"
+    - "tphere"
+    - "msg"
+    - "tell"
+    - "whisper"
+    - "r"
+    - "reply" 
