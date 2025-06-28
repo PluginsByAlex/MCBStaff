@@ -1,6 +1,8 @@
 package me.mcbstaff.mcbstaff.managers;
 
 import me.mcbstaff.mcbstaff.MCBStaff;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -19,6 +21,7 @@ public class OreTrackerManager {
     
     private final MCBStaff plugin;
     private final Map<Material, Material> oreToBlock = new HashMap<>();
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
     
     public OreTrackerManager(MCBStaff plugin) {
         this.plugin = plugin;
@@ -55,17 +58,21 @@ public class OreTrackerManager {
         List<String> trackedOreNames = plugin.getConfigManager().getTrackedOres();
         int slot = 0;
         
+        int maxPlayers = plugin.getConfigManager().getMaxPlayersShown();
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (slot >= 45) break; // Leave space for navigation
+            if (slot >= maxPlayers) break; // Leave space for navigation
             
             ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
             meta.setOwningPlayer(onlinePlayer);
-            meta.setDisplayName("§f" + onlinePlayer.getName());
             
-            List<String> lore = new ArrayList<>();
-            lore.add("§7Ore Statistics:");
-            lore.add("");
+            // Use Adventure API with proper MiniMessage formatting
+            Component displayName = miniMessage.deserialize("<white>" + onlinePlayer.getName() + "</white>");
+            meta.displayName(displayName);
+            
+            List<Component> lore = new ArrayList<>();
+            lore.add(miniMessage.deserialize("<gray>Ore Statistics:</gray>"));
+            lore.add(Component.empty()); // Empty line
             
             // Get ore statistics for this player
             for (String oreName : trackedOreNames) {
@@ -73,24 +80,30 @@ public class OreTrackerManager {
                     Material oreMaterial = Material.valueOf(oreName);
                     if (oreToBlock.containsKey(oreMaterial)) {
                         int count = onlinePlayer.getStatistic(Statistic.MINE_BLOCK, oreMaterial);
-                        String displayName = getDisplayName(oreMaterial);
-                        lore.add("§6" + displayName + ": §f" + count);
+                        String displayOre = getDisplayName(oreMaterial);
+                        lore.add(miniMessage.deserialize("<gold>" + displayOre + ":</gold> <white>" + count + "</white>"));
                     }
                 } catch (IllegalArgumentException | IllegalStateException e) {
                     // Skip invalid materials or statistics
                 }
             }
             
-            meta.setLore(lore);
+            meta.lore(lore);
             playerHead.setItemMeta(meta);
             gui.setItem(slot++, playerHead);
         }
         
-        // Add refresh button
+        // Add refresh button with Adventure API
         ItemStack refreshButton = new ItemStack(Material.EMERALD);
         ItemMeta refreshMeta = refreshButton.getItemMeta();
-        refreshMeta.setDisplayName("§a§lRefresh");
-        refreshMeta.setLore(List.of("§7Click to refresh the ore tracker"));
+        
+        Component refreshName = miniMessage.deserialize("<green><bold>Refresh</bold></green>");
+        refreshMeta.displayName(refreshName);
+        
+        List<Component> refreshLore = new ArrayList<>();
+        refreshLore.add(miniMessage.deserialize("<gray>Click to refresh the ore tracker</gray>"));
+        refreshMeta.lore(refreshLore);
+        
         refreshButton.setItemMeta(refreshMeta);
         gui.setItem(53, refreshButton);
         

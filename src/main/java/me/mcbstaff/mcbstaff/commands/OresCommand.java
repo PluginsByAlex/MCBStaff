@@ -6,9 +6,13 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-public class OresCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class OresCommand implements CommandExecutor, TabCompleter {
     
     private final MCBStaff plugin;
     
@@ -38,5 +42,11 @@ public class OresCommand implements CommandExecutor {
         
         plugin.getOreTrackerManager().openOreTrackerGUI(player);
         return true;
+    }
+    
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        // This command takes no arguments, so return empty list
+        return new ArrayList<>();
     }
 } 

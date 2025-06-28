@@ -7,9 +7,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-public class StaffCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class StaffCommand implements CommandExecutor, TabCompleter {
     
     private final MCBStaff plugin;
     
@@ -43,35 +48,17 @@ public class StaffCommand implements CommandExecutor {
             return true;
         }
         
-        // If one argument, toggle staff mode for target player
-        if (args.length == 1) {
-            if (!player.hasPermission("mcbstaff.staff.others")) {
-                Component message = Component.text().append(
-                    MiniMessage.miniMessage().deserialize("<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <red>You don't have permission to toggle staff mode for other players!</red>")
-                ).build();
-                player.sendMessage(message);
-                return true;
-            }
-            
-            Player target = Bukkit.getPlayer(args[0]);
-            if (target == null) {
-                Component message = plugin.getConfigManager().getMessageComponent("player-not-found");
-                player.sendMessage(message);
-                return true;
-            }
-            
-            plugin.getStaffModeManager().toggleStaffMode(target);
-            Component message = plugin.getConfigManager().getMessageComponent("staff-mode-toggle-others", 
-                "player", target.getName());
-            player.sendMessage(message);
-            return true;
-        }
-        
-        // Invalid usage
+        // Command only accepts no arguments - toggle for self only
         Component message = Component.text().append(
-            MiniMessage.miniMessage().deserialize("<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <red>Usage: /staff [player]</red>")
+            MiniMessage.miniMessage().deserialize("<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <red>Usage: /staff</red>")
         ).build();
         player.sendMessage(message);
         return true;
+    }
+    
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        // Staff command takes no arguments, so return empty list
+        return new ArrayList<>();
     }
 } 

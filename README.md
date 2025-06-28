@@ -13,8 +13,7 @@ A lightweight staff utility plugin for Minecraft servers that provides a dedicat
 
 ### Staff Tools
 - 🧭 **Compass (Teleport GUI)**: Opens a GUI to teleport to any online player
-- 🔸 **Gray Dye (Invisibility)**: Makes staff members invisible to regular players
-- 🟢 **Green Dye (Visibility)**: Makes staff members visible again
+- 🔄 **Invisibility Toggle**: Dynamic item that changes between gray dye (when visible) and lime dye (when invisible)
 - 🔮 **Random Teleport Pearl**: Teleports to a random online player
 - 🔥 **Freeze Rod**: Right-click players to freeze/unfreeze them
 - 📖 **Ore Tracker**: View comprehensive ore mining statistics for all players
@@ -36,9 +35,11 @@ A lightweight staff utility plugin for Minecraft servers that provides a dedicat
 
 ## 📋 Commands
 
+All commands include **tab completion** for player names and arguments!
+
 | Command | Description | Permission |
 |---------|-------------|------------|
-| `/staff [player]` | Toggle staff mode for yourself or another player | `mcbstaff.staff` |
+| `/staff` | Toggle staff mode for yourself | `mcbstaff.staff` |
 | `/freeze <player>` | Freeze or unfreeze a player | `mcbstaff.freeze` |
 | `/ores` | Open the ore tracker GUI | `mcbstaff.ores` |
 
@@ -103,27 +104,21 @@ staffItems:
   invisibility:
     material: "GRAY_DYE"
     slot: 1
-    name: "<b><dark_gray>Invisibility</dark_gray></b>"
+    name: "<b><dark_gray>Invisibility Toggle</dark_gray></b>"
     lore:
-      - "<gray>Right-click to become invisible"
-  
-  visibility:
-    material: "GREEN_DYE"
-    slot: 2
-    name: "<b><green>Visibility</green></b>"
-    lore:
-      - "<gray>Right-click to become visible"
+      - "<gray>Right-click to toggle visibility"
+      - "<gray>Gray dye when visible, lime dye when invisible"
   
   randomTeleport:
     material: "ENDER_PEARL"
-    slot: 3
+    slot: 2
     name: "<b><gradient:#832466:#BF4299:#832466>Random Teleport</gradient></b>"
     lore:
       - "<gray>Right-click to teleport to a random player"
   
   freezeRod:
     material: "BLAZE_ROD"
-    slot: 4
+    slot: 3
     name: "<b><red>Freeze Rod</red></b>"
     lore:
       - "<gray>Right-click a player to freeze/unfreeze them"

@@ -34,13 +34,17 @@ public class ConfigManager {
     // Message methods with MiniMessage support
     public String getMessage(String key) {
         String rawMessage = config.getString("messages." + key, "&cMessage not found: " + key);
+        rawMessage = replacePrefixPlaceholder(rawMessage);
         return processMessage(rawMessage);
     }
     
     public String getMessage(String key, String... placeholders) {
         String message = config.getString("messages." + key, "&cMessage not found: " + key);
         
-        // Replace placeholders
+        // Replace prefix placeholder first
+        message = replacePrefixPlaceholder(message);
+        
+        // Replace other placeholders
         for (int i = 0; i < placeholders.length; i += 2) {
             if (i + 1 < placeholders.length) {
                 message = message.replace("{" + placeholders[i] + "}", placeholders[i + 1]);
@@ -53,13 +57,17 @@ public class ConfigManager {
     // Component versions for better Paper integration
     public Component getMessageComponent(String key) {
         String rawMessage = config.getString("messages." + key, "&cMessage not found: " + key);
+        rawMessage = replacePrefixPlaceholder(rawMessage);
         return parseComponent(rawMessage);
     }
     
     public Component getMessageComponent(String key, String... placeholders) {
         String message = config.getString("messages." + key, "&cMessage not found: " + key);
         
-        // Replace placeholders
+        // Replace prefix placeholder first
+        message = replacePrefixPlaceholder(message);
+        
+        // Replace other placeholders
         for (int i = 0; i < placeholders.length; i += 2) {
             if (i + 1 < placeholders.length) {
                 message = message.replace("{" + placeholders[i] + "}", placeholders[i + 1]);
@@ -106,6 +114,17 @@ public class ConfigManager {
      */
     private boolean containsMiniMessageTags(String message) {
         return message.contains("<") && message.contains(">");
+    }
+    
+    /**
+     * Replace the {prefix} placeholder with the actual prefix value
+     */
+    private String replacePrefixPlaceholder(String message) {
+        if (message.contains("{prefix}")) {
+            String prefix = config.getString("messages.prefix", "");
+            return message.replace("{prefix}", prefix);
+        }
+        return message;
     }
     
     /**
@@ -159,6 +178,10 @@ public class ConfigManager {
         return config.getStringList("randomTeleport.ignoreWorlds");
     }
     
+    public int getMaxRadius() {
+        return config.getInt("randomTeleport.maxRadius", 10000);
+    }
+    
     // Ore tracker methods
     public List<String> getTrackedOres() {
         return config.getStringList("oreTracker.trackedOres");
@@ -168,9 +191,21 @@ public class ConfigManager {
         return config.getInt("oreTracker.updateIntervalTicks", 60);
     }
     
+    public int getMaxPlayersShown() {
+        return config.getInt("oreTracker.maxPlayersShown", 45);
+    }
+    
     // Invisibility methods
     public boolean isBroadcastInvisibilityToStaff() {
         return config.getBoolean("invisibility.broadcastToStaff", true);
+    }
+    
+    public boolean canStaffSeeInvisibleStaff() {
+        return config.getBoolean("invisibility.staffCanSeeInvisibleStaff", true);
+    }
+    
+    public boolean isAutoInvisibleOnStaffMode() {
+        return config.getBoolean("invisibility.autoInvisibleOnStaffMode", false);
     }
     
     // Freeze methods
@@ -220,9 +255,43 @@ public class ConfigManager {
         return config.getInt("freeze.blindness.level", 1);
     }
     
+    // Additional freeze settings
+    public boolean isPreventDamage() {
+        return config.getBoolean("freeze.preventDamage", true);
+    }
+    
+    public boolean isPreventItemDrop() {
+        return config.getBoolean("freeze.preventItemDrop", true);
+    }
+    
+    public boolean isPreventItemPickup() {
+        return config.getBoolean("freeze.preventItemPickup", true);
+    }
+    
+    public boolean isLogActions() {
+        return config.getBoolean("freeze.logActions", true);
+    }
+    
+    // Advanced settings
+    public boolean isDebugMode() {
+        return config.getBoolean("advanced.debug", false);
+    }
+    
+    public boolean isCheckForUpdates() {
+        return config.getBoolean("advanced.checkForUpdates", true);
+    }
+    
+    public int getDataSaveInterval() {
+        return config.getInt("advanced.dataSaveInterval", 300);
+    }
+    
+    public int getDataCleanupDays() {
+        return config.getInt("advanced.dataCleanupDays", 30);
+    }
+    
     // Helper method to identify staff items
     public String getStaffItemType(Material material, String displayName) {
-        String[] itemKeys = {"teleportGUI", "invisibility", "visibility", "randomTeleport", "freezeRod", "oreTracker"};
+        String[] itemKeys = {"teleportGUI", "invisibility", "randomTeleport", "freezeRod", "cpsChecker", "oreTracker"};
         
         for (String itemKey : itemKeys) {
             Material configMaterial = getStaffItemMaterial(itemKey);
@@ -230,6 +299,13 @@ public class ConfigManager {
             
             if (material == configMaterial && displayName != null && displayName.equals(configName)) {
                 return itemKey;
+            }
+        }
+        
+        // Special handling for invisibility toggle - check for both gray and lime dye
+        if ((material == Material.GRAY_DYE || material == Material.LIME_DYE) && displayName != null) {
+            if (displayName.contains("Invisibility") || displayName.contains("Visibility")) {
+                return "invisibility";
             }
         }
         
@@ -241,5 +317,49 @@ public class ConfigManager {
         // Convert the teleport GUI item name to a menu title
         String itemName = getStaffItemName("teleportGUI");
         return itemName.replace("GUI", "Menu");
+    }
+    
+    // ──────────────────────────────────────────────────────────────
+    // CPS Checker Configuration Methods
+    // ──────────────────────────────────────────────────────────────
+    
+    public int getCPSTestDuration() {
+        return config.getInt("cpsChecker.testDuration", 10);
+    }
+    
+    public int getCPSCooldown() {
+        return config.getInt("cpsChecker.cooldown", 30);
+    }
+    
+    public boolean shouldBroadcastCPSResults() {
+        return config.getBoolean("cpsChecker.broadcastToStaff", true);
+    }
+    
+    public boolean shouldLogCPSResults() {
+        return config.getBoolean("cpsChecker.logResults", true);
+    }
+    
+    public double getCPSWarningThreshold() {
+        return config.getDouble("cpsChecker.thresholds.warning", 12.0);
+    }
+    
+    public double getCPSAlertThreshold() {
+        return config.getDouble("cpsChecker.thresholds.alert", 16.0);
+    }
+    
+    public double getCPSCriticalThreshold() {
+        return config.getDouble("cpsChecker.thresholds.critical", 20.0);
+    }
+    
+    public boolean isAutoActionsEnabled() {
+        return config.getBoolean("cpsChecker.autoActions.enabled", false);
+    }
+    
+    public String getCriticalAction() {
+        return config.getString("cpsChecker.autoActions.criticalAction", "freeze");
+    }
+    
+    public int getBanDuration() {
+        return config.getInt("cpsChecker.autoActions.banDuration", 60);
     }
 } 

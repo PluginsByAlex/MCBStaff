@@ -29,6 +29,7 @@ permissions:
       mcbstaff.freeze: true
       mcbstaff.ores: true
       mcbstaff.randomtp: true
+      mcbstaff.cps: true
   mcbstaff.staff:
     description: Access to staff mode and staff items
     default: op
@@ -40,4 +41,7 @@ permissions:
     default: op
   mcbstaff.randomtp:
     description: Use the Random Teleport Pearl
+    default: op
+  mcbstaff.cps:
+    description: Use the CPS Checker item
     default: op 

@@ -1,164 +1,363 @@
-# MCBStaff Configuration
-# A lightweight staff utility plugin for Minecraft servers
+# ╔═══════════════════════════════════════════════════════════════╗
+# ║                         MCBStaff Plugin                      ║
+# ║              Professional Staff Utilities v1.0               ║
+# ║                                                               ║
+# ║  A lightweight yet powerful staff utility plugin designed    ║
+# ║  for modern Minecraft servers. Supports MiniMessage for      ║
+# ║  beautiful formatting and Adventure API for the best         ║
+# ║  possible user experience.                                    ║
+# ╚═══════════════════════════════════════════════════════════════╝
 
-# Plugin messages - customize all plugin messages here
-# Supports both legacy color codes (&) and modern MiniMessage format
-# MiniMessage examples:
-#   - Gradients: <gradient:red:blue>text</gradient>
-#   - Click events: <click:run_command:/help>Click me!</click>
-#   - Hover text: <hover:show_text:'Tooltip text'>Hover over me</hover>
-#   - Formatting: <bold><italic><red>Bold italic red text</red></italic></bold>
+# ═══════════════════════════════════════════════════════════════
+#                        MESSAGES CONFIGURATION
+# ═══════════════════════════════════════════════════════════════
+# All messages support MiniMessage format for rich text, colors,
+# gradients, hover events, click events, and more!
 # 
-# Legacy format (&a, &c, etc.) is still fully supported
-messages:
-  staff-mode-enabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Staff mode <green>enabled</green>!</gray>"
-  staff-mode-disabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Staff mode <red>disabled</red>!</gray>"
-  staff-mode-toggle-others: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Toggled staff mode for <white>{player}</white>!</gray>"
-  freeze-enabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Player <white>{player}</white> has been <red>frozen</red>!</gray>"
-  freeze-disabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Player <white>{player}</white> has been <green>unfrozen</green>!</gray>"
-  freeze-notify-player: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>You have been frozen by a staff member!</gray>"
-  freeze-unfreeze-notify-player: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>You have been unfrozen!</gray>"
-  freeze-deny-move: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>You cannot move while frozen!</gray>"
-  freeze-deny-chat: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>You cannot chat while frozen!</gray>"
-  freeze-deny-command: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>You cannot use commands while frozen!</gray>"
-  player-not-found: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <red>Player not found!</red>"
-  already-frozen: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Player <white>{player}</white> is already frozen!</gray>"
-  not-frozen: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Player <white>{player}</white> is not frozen!</gray>"
-  teleported-to-player: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Teleported to <white>{player}</white>!</gray>"
-  no-players-found: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <red>No players found for random teleport!</red>"
-  ore-tracker-title: "<dark_gray>[</dark_gray><gold>Ore Tracker</gold><dark_gray>]</dark_gray>"
-  ore-tracker-updated: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>Ore tracker updated!</gray>"
-  invisibility-enabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>You are now <dark_gray>invisible</dark_gray>!</gray>"
-  invisibility-disabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <gray>You are now <green>visible</green>!</gray>"
-  invisibility-broadcast-enabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <white>{player}</white> <gray>is now <dark_gray>invisible</dark_gray>!</gray>"
-  invisibility-broadcast-disabled: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <white>{player}</white> <gray>is now <green>visible</green>!</gray>"
+# MiniMessage Examples:
+#   Colors: <red>text</red>, <#ff5555>custom hex</red>
+#   Gradients: <gradient:#832466:#BF4299>beautiful text</gradient>
+#   Formatting: <bold>bold</bold>, <italic>italic</italic>
+#   Interactive: <click:run_command:/help>Click me!</click>
+#
+# Placeholders available: {player}
+# ═══════════════════════════════════════════════════════════════
 
-# Staff items configuration - customize all staff mode items here
-# Both item names and lore support MiniMessage format!
-# Examples:
-#   name: "<gradient:gold:yellow><bold>Teleport GUI</bold></gradient>"
-#   lore:
-#     - "<gray>Right-click to open teleport menu"
-#     - "<click:suggest_command:/help><green>Click for help!</green></click>"
+messages:
+  prefix: "<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> "
+  # ─── Staff Mode Messages ───
+  staff-mode-enabled: "{prefix}<gray>Staff mode <green>enabled</green>!</gray>"
+  staff-mode-disabled: "{prefix}<gray>Staff mode <red>disabled</red>!</gray>"
+  
+  # ─── Freeze System Messages ───
+  freeze-enabled: "{prefix}<gray>Player <white>{player}</white> has been <red>frozen</red>!</gray>"
+  freeze-disabled: "{prefix}<gray>Player <white>{player}</white> has been <green>unfrozen</green>!</gray>"
+  freeze-notify-player: "{prefix}<gray>You have been frozen by a staff member!</gray>"
+  freeze-unfreeze-notify-player: "{prefix}<gray>You have been unfrozen!</gray>"
+  freeze-deny-move: "{prefix}<gray>You cannot move while frozen!</gray>"
+  freeze-deny-chat: "{prefix}<gray>You cannot chat while frozen!</gray>"
+  freeze-deny-command: "{prefix}<gray>You cannot use commands while frozen!</gray>"
+  already-frozen: "{prefix}<gray>Player <white>{player}</white> is already frozen!</gray>"
+  not-frozen: "{prefix}<gray>Player <white>{player}</white> is not frozen!</gray>"
+  
+  # ─── Invisibility Messages ───
+  invisibility-enabled: "{prefix}<gray>You are now <dark_gray>invisible</dark_gray>!</gray>"
+  invisibility-disabled: "{prefix}<gray>You are now <green>visible</green>!</gray>"
+  invisibility-broadcast-enabled: "{prefix}<white>{player}</white> <gray>is now <dark_gray>invisible</dark_gray>!</gray>"
+  invisibility-broadcast-disabled: "{prefix}<white>{player}</white> <gray>is now <green>visible</green>!</gray>"
+  
+  # ─── CPS Checker Messages ───
+  cps-test-started: "{prefix}<yellow>CPS test started for <white>{player}</white> ({duration} seconds)</yellow>"
+  cps-test-results: "{prefix}<gray>CPS Results for <white>{player}</white>:</gray><br><yellow>• Clicks: <white>{clicks}</white></yellow><br><yellow>• Duration: <white>{duration}s</white></yellow><br><yellow>• CPS: <white>{cps}</white></yellow>"
+  cps-test-broadcast: "{prefix}<gray><yellow>{staff}</yellow> tested <white>{player}</white>'s CPS: <white>{cps}</white> clicks/sec</gray>"
+  cps-warning: "{prefix}<yellow>WARNING: Player <white>{player}</white> has suspicious CPS: <red>{cps}</red> clicks/sec</yellow>"
+  cps-critical: "{prefix}<red>CRITICAL: Player <white>{player}</white> likely using auto-clicker: <dark_red>{cps}</dark_red> clicks/sec</red>"
+  cps-test-in-progress: "{prefix}<yellow>A CPS test is already in progress for this player!</yellow>"
+  cps-cooldown-active: "{prefix}<yellow>You must wait <white>{time}</white> seconds before testing this player again!</yellow>"
+  cps-cannot-test-self: "{prefix}<red>You cannot test your own CPS!</red>"
+  cps-auto-action-taken: "{prefix}<red>Auto-action taken against <white>{player}</white> for suspicious CPS: <white>{action}</white></red>"
+  
+  # ─── Teleportation Messages ───
+  teleported-to-player: "{prefix}<gray>Teleported to <white>{player}</white>!</gray>"
+  no-players-found: "{prefix}<red>No players found for random teleport!</red>"
+  
+  # ─── General Messages ───
+  player-not-found: "{prefix}<red>Player not found!</red>"
+  no-permission-freeze: "{prefix}<red>You don't have permission to freeze players!</red>"
+  no-permission-cps: "{prefix}<red>You don't have permission to use the CPS checker!</red>"
+  no-permission-randomtp: "{prefix}<red>You don't have permission to use random teleport!</red>"
+  ore-tracker-title: "<dark_gray>[</dark_gray><gold>Ore Tracker</gold><dark_gray>]</dark_gray>"
+  ore-tracker-updated: "{prefix}<gray>Ore tracker updated!</gray>"
+
+# ═══════════════════════════════════════════════════════════════
+#                      STAFF ITEMS CONFIGURATION  
+# ═══════════════════════════════════════════════════════════════
+# Configure all staff mode items here. Each item can be fully
+# customized including material, slot position, name, and lore.
+# All text supports MiniMessage formatting for beautiful displays.
+#
+# Available Materials: Any valid Bukkit Material name
+# Slot Range: 0-8 (hotbar positions)
+# ═══════════════════════════════════════════════════════════════
+
 staffItems:
+  # ─── Teleport GUI (Slot 0) ───
   teleportGUI:
     material: "COMPASS"
     slot: 0
     name: "<b><gradient:#832466:#BF4299:#832466>Teleport GUI</gradient></b>"
     lore:
-      - "<gray>Right-click to open teleport menu"
+      - "<gray>Right-click to open teleport menu</gray>"
+      - "<dark_gray>View all online players</dark_gray>"
   
+  # ─── Invisibility Toggle (Slot 1) ───
   invisibility:
     material: "GRAY_DYE"
     slot: 1
-    name: "<b><dark_gray>Invisibility</dark_gray></b>"
+    name: "<b><dark_gray>Invisibility Toggle</dark_gray></b>"
     lore:
-      - "<gray>Right-click to become invisible"
+      - "<gray>Right-click to toggle visibility</gray>"
+      - "<dark_gray>• Gray dye when visible</dark_gray>"
+      - "<dark_gray>• Lime dye when invisible</dark_gray>"
   
-  visibility:
-    material: "GREEN_DYE"
-    slot: 2
-    name: "<b><green>Visibility</green></b>"
-    lore:
-      - "<gray>Right-click to become visible"
-  
+  # ─── Random Teleport (Slot 2) ───
   randomTeleport:
     material: "ENDER_PEARL"
-    slot: 3
+    slot: 2
     name: "<b><gradient:#832466:#BF4299:#832466>Random Teleport</gradient></b>"
     lore:
-      - "<gray>Right-click to teleport to a random player"
+      - "<gray>Right-click to teleport to a random player</gray>"
+      - "<dark_gray>Excludes configured worlds</dark_gray>"
   
+  # ─── Freeze Rod (Slot 3) ───
   freezeRod:
     material: "BLAZE_ROD"
-    slot: 4
+    slot: 3
     name: "<b><red>Freeze Rod</red></b>"
     lore:
-      - "<gray>Right-click a player to freeze/unfreeze them"
+      - "<gray>Right-click a player to freeze/unfreeze them</gray>"
+      - "<dark_gray>Prevents movement and certain commands</dark_gray>"
   
+  # ─── CPS Checker (Slot 4) ───
+  cpsChecker:
+    material: "CLOCK"
+    slot: 4
+    name: "<b><yellow>CPS Checker</yellow></b>"
+    lore:
+      - "<gray>Right-click a player to start CPS test</gray>"
+      - "<dark_gray>Monitor clicking behavior</dark_gray>"
+  
+  # ─── Ore Tracker (Slot 8) ───
   oreTracker:
     material: "BOOK"
     slot: 8
     name: "<b><gradient:#832466:#BF4299:#832466>Ore Tracker</gradient></b>"
     lore:
-      - "<gray>Right-click to view ore statistics"
+      - "<gray>Right-click to view ore statistics</gray>"
+      - "<dark_gray>Monitor player mining activity</dark_gray>"
 
-# Random teleport configuration
+# ═══════════════════════════════════════════════════════════════
+#                    RANDOM TELEPORT SETTINGS
+# ═══════════════════════════════════════════════════════════════
+# Configure how the random teleport feature works.
+# ═══════════════════════════════════════════════════════════════
+
 randomTeleport:
-  # Worlds to ignore for random teleport (players in these worlds won't be teleport targets)
+  # Worlds to exclude from random teleport targets
+  # Players in these worlds will not be valid teleport destinations
   ignoreWorlds:
     - "world_nether"
     - "world_the_end"
     - "spawn"
+    - "lobby"
+    - "hub"
   
-  # Maximum teleport distance from spawn (in blocks)
-  radius: 1000
+  # Maximum radius from spawn for random teleports (in blocks)
+  # Set to -1 to disable radius checking
+  maxRadius: 10000
 
-# Invisibility configuration
+# ═══════════════════════════════════════════════════════════════
+#                      INVISIBILITY SETTINGS
+# ═══════════════════════════════════════════════════════════════
+# Configure invisibility behavior for staff members.
+# ═══════════════════════════════════════════════════════════════
+
 invisibility:
-  # Whether to broadcast invisibility changes to staff members
+  # Broadcast invisibility state changes to other staff members
   broadcastToStaff: true
+  
+  # Whether invisible staff can see other invisible staff
+  staffCanSeeInvisibleStaff: true
+  
+  # Automatically make staff invisible when they enter staff mode
+  autoInvisibleOnStaffMode: false
 
-# Ore tracker configuration
+# ═══════════════════════════════════════════════════════════════
+#                        CPS CHECKER SETTINGS
+# ═══════════════════════════════════════════════════════════════
+# Configure the Clicks Per Second (CPS) testing system for
+# detecting auto-clickers and monitoring player behavior.
+# ═══════════════════════════════════════════════════════════════
+
+cpsChecker:
+  # Duration of the CPS test in seconds
+  testDuration: 10
+  
+  # Minimum time between CPS tests on the same player (in seconds)
+  # This prevents spam testing
+  cooldown: 30
+  
+  # Whether to broadcast CPS test results to all staff members
+  broadcastToStaff: true
+  
+  # Whether to log CPS test results to console
+  logResults: true
+  
+  # CPS thresholds for warnings (clicks per second)
+  thresholds:
+    # Yellow warning threshold
+    warning: 12
+    # Red alert threshold (likely auto-clicker)
+    alert: 16
+    # Critical threshold (definite auto-clicker)
+    critical: 20
+  
+  # Whether to automatically take action on high CPS
+  autoActions:
+    enabled: false
+    # What to do when critical threshold is reached
+    # Options: "freeze", "kick", "ban", "none"
+    criticalAction: "freeze"
+    # How long to ban players (in minutes, only if action is "ban")
+    banDuration: 60
+
+# ═══════════════════════════════════════════════════════════════
+#                      ORE TRACKER SETTINGS
+# ═══════════════════════════════════════════════════════════════
+# Monitor and track player mining statistics.
+# ═══════════════════════════════════════════════════════════════
+
 oreTracker:
-  # List of blocks to track (Material names)
+  # Blocks to track in the ore tracker GUI
+  # Add or remove materials as needed for your server
   trackedOres:
+    # ─── Diamond Ores ───
     - "DIAMOND_ORE"
     - "DEEPSLATE_DIAMOND_ORE"
+    
+    # ─── Emerald Ores ───
     - "EMERALD_ORE"
     - "DEEPSLATE_EMERALD_ORE"
+    
+    # ─── Gold Ores ───
     - "GOLD_ORE"
     - "DEEPSLATE_GOLD_ORE"
+    - "NETHER_GOLD_ORE"
+    
+    # ─── Iron Ores ───
     - "IRON_ORE"
     - "DEEPSLATE_IRON_ORE"
+    
+    # ─── Copper Ores ───
     - "COPPER_ORE"
     - "DEEPSLATE_COPPER_ORE"
+    
+    # ─── Coal Ores ───
     - "COAL_ORE"
     - "DEEPSLATE_COAL_ORE"
+    
+    # ─── Lapis Ores ───
     - "LAPIS_ORE"
     - "DEEPSLATE_LAPIS_ORE"
+    
+    # ─── Redstone Ores ───
     - "REDSTONE_ORE"
     - "DEEPSLATE_REDSTONE_ORE"
+    
+    # ─── Other Valuable Blocks ───
     - "NETHER_QUARTZ_ORE"
-    - "NETHER_GOLD_ORE"
     - "ANCIENT_DEBRIS"
   
-  # GUI update interval in ticks (20 ticks = 1 second)
+  # How often to update the ore tracker GUI (in ticks)
+  # 20 ticks = 1 second, 60 ticks = 3 seconds
   updateIntervalTicks: 60
+  
+  # Maximum number of players to show in the GUI
+  maxPlayersShown: 45
 
-# Freeze system configuration
+# ═══════════════════════════════════════════════════════════════
+#                        FREEZE SYSTEM SETTINGS
+# ═══════════════════════════════════════════════════════════════
+# Complete configuration for the player freeze system.
+# ═══════════════════════════════════════════════════════════════
+
 freeze:
+  # ─── Command Restrictions ───
   # Commands that frozen players cannot use (case-insensitive)
+  # Add or remove commands based on your server's plugins
   denyCommands:
     - "spawn"
     - "home"
+    - "sethome"
     - "tp"
     - "teleport"
-    - "warp"
-    - "back"
     - "tpa"
     - "tpaccept"
+    - "tpdeny"
     - "tphere"
+    - "warp"
+    - "back"
     - "msg"
     - "tell"
     - "whisper"
+    - "w"
     - "r"
     - "reply"
+    - "mail"
+    - "pay"
+    - "bal"
+    - "balance"
+    - "shop"
+    - "market"
+    - "ah"
+    - "auction"
   
-  # Title and subtitle shown to frozen players
+  # ─── Visual Effects ───
+  # Title and subtitle displayed to frozen players
   title:
     enabled: true
-    # Main title text
     text: "<b><red>FROZEN</red></b>"
-    # Subtitle text
-    subtitle: "<gray>Join the discord</gray>"
-    # Title timings (in ticks): fadeIn, stay, fadeOut
-    fadeIn: 10
-    stay: 70
-    fadeOut: 20
+    subtitle: "<gray>Join our Discord for assistance</gray>"
+    # Timing in ticks (20 ticks = 1 second)
+    fadeIn: 10      # Time to fade in
+    stay: 100       # Time to stay visible  
+    fadeOut: 20     # Time to fade out
   
-  # Blindness effect configuration
+  # Blindness effect for frozen players
   blindness:
     enabled: true
-    # Blindness effect level (0-255, recommended: 0-2)
-    level: 1 
+    level: 1        # Effect level (0-255, recommended: 0-2)
+  
+  # ─── Behavioral Settings ───
+  # Prevent frozen players from taking damage
+  preventDamage: true
+  
+  # Prevent frozen players from dropping items
+  preventItemDrop: true
+  
+  # Prevent frozen players from picking up items
+  preventItemPickup: true
+  
+  # Log freeze/unfreeze actions to console
+  logActions: true
+
+# ═══════════════════════════════════════════════════════════════
+#                        ADVANCED SETTINGS
+# ═══════════════════════════════════════════════════════════════
+# Advanced configuration options for server administrators.
+# Only modify these if you know what you're doing!
+# ═══════════════════════════════════════════════════════════════
+
+advanced:
+  # Debug mode - enables additional console logging
+  debug: false
+  
+  # Check for plugin updates on startup
+  checkForUpdates: true
+  
+  # Save player data every X seconds (0 to disable)
+  dataSaveInterval: 300
+  
+  # Cleanup offline player data after X days (0 to disable)
+  dataCleanupDays: 30
+
+# ═══════════════════════════════════════════════════════════════
+#              📝 Configuration File Information
+# ═══════════════════════════════════════════════════════════════
+# Config Version: 1.0
+# Plugin Version: 1.0.0
+# Last Updated: 2025
+# 
+# For support and documentation, visit:
+# https://github.com/PluginsByAlex/MCBStaff
+# ═══════════════════════════════════════════════════════════════ 

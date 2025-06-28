@@ -7,9 +7,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-public class FreezeCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class FreezeCommand implements CommandExecutor, TabCompleter {
     
     private final MCBStaff plugin;
     
@@ -55,5 +60,26 @@ public class FreezeCommand implements CommandExecutor {
         }
         
         return true;
+    }
+    
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        // Only provide completions if sender has permission
+        if (!sender.hasPermission("mcbstaff.freeze")) {
+            return new ArrayList<>();
+        }
+        
+        // For first argument, suggest player names
+        if (args.length == 1) {
+            String input = args[0].toLowerCase();
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .filter(name -> name.toLowerCase().startsWith(input))
+                    .sorted()
+                    .collect(Collectors.toList());
+        }
+        
+        // No completions for additional arguments
+        return new ArrayList<>();
     }
 } 

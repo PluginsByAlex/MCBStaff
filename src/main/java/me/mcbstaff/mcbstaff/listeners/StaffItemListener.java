@@ -55,11 +55,9 @@ public class StaffItemListener implements Listener {
                     break;
                     
                 case "invisibility":
-                    toggleInvisibility(player, true);
-                    break;
-                    
-                case "visibility":
-                    toggleInvisibility(player, false);
+                    // Toggle invisibility state
+                    boolean currentlyInvisible = plugin.getStaffModeManager().isInvisible(player);
+                    toggleInvisibility(player, !currentlyInvisible);
                     break;
                     
                 case "randomTeleport":
@@ -98,14 +96,25 @@ public class StaffItemListener implements Listener {
                 Player target = (Player) event.getRightClicked();
                 
                 if (!player.hasPermission("mcbstaff.freeze")) {
-                    Component message = Component.text().append(
-                        MiniMessage.miniMessage().deserialize("<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <red>You don't have permission to freeze players!</red>")
-                    ).build();
+                    Component message = plugin.getConfigManager().getMessageComponent("no-permission-freeze");
                     player.sendMessage(message);
                     return;
                 }
                 
                 plugin.getFreezeManager().toggleFreeze(target);
+                event.setCancelled(true);
+            }
+        } else if ("cpsChecker".equals(staffItemType)) {
+            if (event.getRightClicked() instanceof Player) {
+                Player target = (Player) event.getRightClicked();
+                
+                if (!player.hasPermission("mcbstaff.cps")) {
+                    Component message = plugin.getConfigManager().getMessageComponent("no-permission-cps");
+                    player.sendMessage(message);
+                    return;
+                }
+                
+                plugin.getCPSManager().startCPSTest(player, target);
                 event.setCancelled(true);
             }
         }
@@ -131,7 +140,7 @@ public class StaffItemListener implements Listener {
             Component displayName = meta.displayName();
             if (displayName == null) return;
             
-            String targetName = plugin.getConfigManager().getLegacySerializer().serialize(displayName).replace("§f", "");
+            String targetName = plugin.getConfigManager().getLegacySerializer().serialize(displayName).replace("§f", "").replace("§r", "");
             Player target = Bukkit.getPlayer(targetName);
             
             if (target != null && target.isOnline()) {
@@ -158,8 +167,9 @@ public class StaffItemListener implements Listener {
             
             String displayNameString = plugin.getConfigManager().getLegacySerializer().serialize(displayName);
             
-            // Handle refresh button
-            if (clicked.getType() == Material.EMERALD && "§a§lRefresh".equals(displayNameString)) {
+            // Handle refresh button - check if it's an emerald with refresh in the name
+            if (clicked.getType() == Material.EMERALD && displayNameString != null && 
+                (displayNameString.contains("Refresh") || displayNameString.contains("refresh"))) {
                 plugin.getOreTrackerManager().openOreTrackerGUI(player);
                 Component message = plugin.getConfigManager().getMessageComponent("ore-tracker-updated");
                 player.sendMessage(message);
@@ -180,17 +190,18 @@ public class StaffItemListener implements Listener {
             SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
             meta.setOwningPlayer(onlinePlayer);
             
-            // Use Adventure API for display name
-            Component displayName = Component.text("§f" + onlinePlayer.getName());
+            // Use Adventure API with proper MiniMessage formatting
+            MiniMessage miniMessage = MiniMessage.miniMessage();
+            Component displayName = miniMessage.deserialize("<white>" + onlinePlayer.getName() + "</white>");
             meta.displayName(displayName);
             
-            // Use Adventure API for lore
+            // Use Adventure API for lore with proper formatting
             List<Component> lore = new ArrayList<>();
-            lore.add(Component.text("§7Click to teleport to " + onlinePlayer.getName()));
-            lore.add(Component.text("§7World: §f" + onlinePlayer.getWorld().getName()));
-            lore.add(Component.text("§7Location: §f" + (int) onlinePlayer.getLocation().getX() + ", " + 
+            lore.add(miniMessage.deserialize("<gray>Click to teleport to " + onlinePlayer.getName() + "</gray>"));
+            lore.add(miniMessage.deserialize("<gray>World:</gray> <white>" + onlinePlayer.getWorld().getName() + "</white>"));
+            lore.add(miniMessage.deserialize("<gray>Location:</gray> <white>" + (int) onlinePlayer.getLocation().getX() + ", " + 
                     (int) onlinePlayer.getLocation().getY() + ", " + 
-                    (int) onlinePlayer.getLocation().getZ()));
+                    (int) onlinePlayer.getLocation().getZ() + "</white>"));
             meta.lore(lore);
             
             playerHead.setItemMeta(meta);
@@ -201,6 +212,9 @@ public class StaffItemListener implements Listener {
     }
     
     private void toggleInvisibility(Player player, boolean invisible) {
+        // Update the state in StaffModeManager
+        plugin.getStaffModeManager().setInvisible(player, invisible);
+        
         if (invisible) {
             player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false));
             
@@ -250,9 +264,7 @@ public class StaffItemListener implements Listener {
     
     private void randomTeleport(Player player) {
         if (!player.hasPermission("mcbstaff.randomtp")) {
-            Component message = Component.text().append(
-                MiniMessage.miniMessage().deserialize("<b><gradient:#832466:#BF4299:#832466>MCBSTAFF</gradient></b> <red>You don't have permission to use random teleport!</red>")
-            ).build();
+            Component message = plugin.getConfigManager().getMessageComponent("no-permission-randomtp");
             player.sendMessage(message);
             return;
         }
