@@ -35,7 +35,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: MCBStaff-JAR
-        path: target/MCBStaff-*.jar
+        path: target/mcbstaff-*.jar
         
   release:
     needs: build
@@ -96,6 +96,6 @@ jobs:
           - `mcbstaff.randomtp` - Use random teleport
           
           **Compatibility:** Minecraft 1.21.4+ (Paper/Spigot)
-        files: target/MCBStaff-*.jar
+        files: target/mcbstaff-*.jar
         draft: false
         prerelease: false 
