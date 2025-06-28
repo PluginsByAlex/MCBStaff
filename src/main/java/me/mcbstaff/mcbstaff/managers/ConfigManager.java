@@ -33,13 +33,13 @@ public class ConfigManager {
     
     // Message methods with MiniMessage support
     public String getMessage(String key) {
-        String rawMessage = config.getString("messages." + key, "&cMessage not found: " + key);
+        String rawMessage = config.getString("messages." + key, "<red>Message not found: " + key);
         rawMessage = replacePrefixPlaceholder(rawMessage);
         return processMessage(rawMessage);
     }
     
     public String getMessage(String key, String... placeholders) {
-        String message = config.getString("messages." + key, "&cMessage not found: " + key);
+        String message = config.getString("messages." + key, "<red>Message not found: " + key);
         
         // Replace prefix placeholder first
         message = replacePrefixPlaceholder(message);
@@ -56,13 +56,13 @@ public class ConfigManager {
     
     // Component versions for better Paper integration
     public Component getMessageComponent(String key) {
-        String rawMessage = config.getString("messages." + key, "&cMessage not found: " + key);
+        String rawMessage = config.getString("messages." + key, "<red>Message not found: " + key);
         rawMessage = replacePrefixPlaceholder(rawMessage);
         return parseComponent(rawMessage);
     }
     
     public Component getMessageComponent(String key, String... placeholders) {
-        String message = config.getString("messages." + key, "&cMessage not found: " + key);
+        String message = config.getString("messages." + key, "<red>Message not found: " + key);
         
         // Replace prefix placeholder first
         message = replacePrefixPlaceholder(message);
@@ -150,12 +150,12 @@ public class ConfigManager {
     }
     
     public String getStaffItemName(String itemKey) {
-        String rawName = config.getString("staffItems." + itemKey + ".name", "&7" + itemKey);
+        String rawName = config.getString("staffItems." + itemKey + ".name", "<gray>" + itemKey);
         return processMessage(rawName);
     }
     
     public Component getStaffItemNameComponent(String itemKey) {
-        String rawName = config.getString("staffItems." + itemKey + ".name", "&7" + itemKey);
+        String rawName = config.getString("staffItems." + itemKey + ".name", "<gray>" + itemKey);
         return parseComponent(rawName);
     }
     

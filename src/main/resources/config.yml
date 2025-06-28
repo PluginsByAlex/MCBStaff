@@ -350,14 +350,3 @@ advanced:
   
   # Cleanup offline player data after X days (0 to disable)
   dataCleanupDays: 30
-
-# ═══════════════════════════════════════════════════════════════
-#              📝 Configuration File Information
-# ═══════════════════════════════════════════════════════════════
-# Config Version: 1.0
-# Plugin Version: 1.0.0
-# Last Updated: 2025
-# 
-# For support and documentation, visit:
-# https://github.com/PluginsByAlex/MCBStaff
-# ═══════════════════════════════════════════════════════════════ 

@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -134,7 +135,21 @@ public class StaffItemListener implements Listener {
             boolean isStaffGUI = event.getView().getTitle().equals(teleportGUITitle) || 
                                plugin.getOreTrackerManager().isOreTrackerGUI(event.getInventory());
             
+            // If it's not a staff GUI, always cancel the event
             if (!isStaffGUI) {
+                event.setCancelled(true);
+                return;
+            }
+            
+            // Even in staff GUIs, prevent certain actions
+            // Cancel if clicking on player inventory (bottom inventory)
+            if (event.getRawSlot() >= event.getView().getTopInventory().getSize()) {
+                event.setCancelled(true);
+                return;
+            }
+            
+            // Cancel shift-click that would move items to player inventory
+            if (event.isShiftClick()) {
                 event.setCancelled(true);
                 return;
             }
@@ -155,7 +170,8 @@ public class StaffItemListener implements Listener {
             Component displayName = meta.displayName();
             if (displayName == null) return;
             
-            String targetName = plugin.getConfigManager().getLegacySerializer().serialize(displayName).replace("§f", "").replace("§r", "");
+            String targetName = plugin.getConfigManager().getLegacySerializer().serialize(displayName)
+                .replace("§f", "").replace("§r", "").replace("§", "");
             Player target = Bukkit.getPlayer(targetName);
             
             if (target != null && target.isOnline()) {
@@ -188,6 +204,33 @@ public class StaffItemListener implements Listener {
                 plugin.getOreTrackerManager().openOreTrackerGUI(player);
                 Component message = plugin.getConfigManager().getMessageComponent("ore-tracker-updated");
                 player.sendMessage(message);
+            }
+        }
+    }
+    
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent event) {
+        if (!(event.getWhoClicked() instanceof Player)) return;
+        
+        Player player = (Player) event.getWhoClicked();
+        
+        // Prevent inventory dragging while in staff mode (except for staff GUIs)
+        if (plugin.getStaffModeManager().isInStaffMode(player)) {
+            String teleportGUITitle = plugin.getConfigManager().getTeleportGUITitle();
+            boolean isStaffGUI = event.getView().getTitle().equals(teleportGUITitle) || 
+                               plugin.getOreTrackerManager().isOreTrackerGUI(event.getInventory());
+            
+            if (!isStaffGUI) {
+                event.setCancelled(true);
+                return;
+            }
+            
+            // Even in staff GUIs, prevent dragging items to player inventory
+            for (Integer slot : event.getRawSlots()) {
+                if (slot >= event.getView().getTopInventory().getSize()) {
+                    event.setCancelled(true);
+                    return;
+                }
             }
         }
     }
